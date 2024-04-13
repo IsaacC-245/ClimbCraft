@@ -13,12 +13,21 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
 
+favorites = db.Table("favorites",
+                     db.Column('parent_id', db.Integer, db.ForeignKey('route.id')),
+                     db.Column('child_id', db.Integer, db.ForeignKey('user.id'))
+                     )
+
+
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    favorite_routes = db.relationship("User", secondary=favorites,
+                                      primaryjoin=(favorites.c.parent_id == id),
+                                      secondaryjoin=(favorites.c.child_id == id))
 
 
 class Route(db.Model):
@@ -29,8 +38,35 @@ class Route(db.Model):
     difficulty = db.Column(db.String(60), nullable=False)
     angle = db.Column(db.Integer, nullable=False)
     machine_type = db.Column(db.String(60), nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey, nullable=False)
     create_time = db.Column(db.DateTime)
+    user = db.relationship("User", db.ForeignKey, backref="routes")
+
+
+class Grid(db.Model):
+    tablename = "grid"
+
+    id = db.Column(db.Integer, primarykey=True)
+    route_id = db.Column(db.Integer, nullable=False)
+    row = db.Column(db.String(60), nullable=False)
+
+
+class Review(db.Model):
+    _tablename = "review"
+
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, nullable=True)
+    difficulty = db.Column(db.Integer, nullable=True)
+    route_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+
+
+class Relationship(db.Model):
+    __tablename = "relationship"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    route_id = db.Column(db.Integer, nullable=False)
 
 
 @login_manager.user_loader
