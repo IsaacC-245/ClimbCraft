@@ -77,11 +77,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/')
-def hello_world():
-    return render_template("register.html")
-
-
+@app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -141,20 +137,16 @@ def create():
 
 @app.route("/home", methods=["GET", "POST"])
 def home():
-    id = current_user.id
-    routes_list = Route.query.filter_by(user_id=id)
+    user_id = current_user.id
+    routes_list = Route.query.filter_by(user_id=user_id).all()
     list_of_dictionary = []
     for current_route in routes_list:
-        output = {}
-        output["Id"] = current_route.id
-        output["Name"] = current_route.name
-        output["Difficulty"] = current_route.difficulty
-        output["Angle"] = current_route.angle
-        output["Machine_Type"] = current_route.machine_type
-        output["User_ID"] = current_route.user_id
-        output["Create_Time"] = current_route.create_type
+        output = {"id": current_route.id, "name": current_route.name, "difficulty": current_route.difficulty,
+                  "angle": current_route.angle, "machine_type": current_route.machine_type,
+                  "user_id": current_route.user_id, "create_time": current_route.create_type}
         list_of_dictionary.append(output)
-    return render_template("home.html", list_of_dictionary)
+    data = {"data": list_of_dictionary}
+    return render_template("index.html", data=list_of_dictionary)
 
 @app.route('/community')
 def community():
