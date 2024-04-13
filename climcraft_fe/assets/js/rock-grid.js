@@ -64,5 +64,5 @@ function displayGrid(gridClass, count) {
 
 // Initialize the default grid
 window.onload = () => {
-  displayGrid("grid-7x10", grids["grid-7x10"]);
+  displayGrid("grid-12x12", grids["grid-12x12"]);
 };
