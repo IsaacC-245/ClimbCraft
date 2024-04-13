@@ -41,7 +41,7 @@ class Route(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey, nullable=False)
     create_time = db.Column(db.DateTime)
     user = db.relationship("User", db.ForeignKey, backref="routes")
-
+    
 
 class Grid(db.Model):
     tablename = "grid"
@@ -125,10 +125,10 @@ def create():
         name = request.form.get("name")
         difficulty = request.form.get("difficulty")
         angle = request.form.get("angle")
-        machineType = request.form.get("machineType")
-        userId = request.form.get("userId")
+        machineType = request.form.get("machine_type")
+        userId = request.form.get("user_id")
 
-        mySQL = f"INSERT INTO route (name, difficulty, angle, machineType, userId) VALUES ({name},{difficulty},{angle},{machineType},{userId});"
+        mySQL = f"INSERT INTO route (name, difficulty, angle, machine_type, user_id) VALUES ({name},{difficulty},{angle},{machineType},{userId});"
         db.engine.execute(mySQL)
         return redirect(url_for("home"))
 
