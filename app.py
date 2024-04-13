@@ -54,13 +54,13 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form.get("username")
+        username = request.form.get("email")
         password = request.form.get("password")
 
-        temp_username = User.query.filter_by(username).first()
+        temp_username = User.query.filter_by(username=username).first()
         if temp_username:
             flash(f"An account with that user already exists", "danger")
-            return redirect(url_for("register.html"))
+            return redirect(url_for("register"))
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = User(username=username, password=hashed_password)
