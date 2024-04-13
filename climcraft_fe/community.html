@@ -1,52 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community - ClimbCraft</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
-    <link rel="stylesheet" href="assets/css/custom.css">
-</head>
-<body>
-    <div id="wrapper">
-        <!-- Sidebar and Navbar from Template.html -->
-        <!-- Main Content -->
-        <div id="content-wrapper">
-            <div class="container-fluid">
-                <h1 class="mt-4">Community Routes</h1>
-                <div class="card-deck">
-                    {% for route in routes %}
-                    <div class="card mb-4">
-                        <img class="card-img-top" src="{{ route.image_url }}" alt="Route Image">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ route.name }}</h5>
-                            <p class="card-text">{{ route.description }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <span class="rating">
-                                {% for route in routes %}
-                                    <!-- Route Image placeholder or actual image tag -->
-                                    <h3>{{ route.name }}</h3>
-                                    <p>{{ route.description }}</p>
-                                    {% for i in range(5) %}
-                                        {% if i < route.rating %}
-                                            <i class="fas fa-star"></i> <!-- This is a filled star -->
-                                        {% else %}
-                                            <i class="far fa-star"></i> <!-- This is an empty star -->
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}                                
-                            </span>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+        <title>Community Routes - ClimbCraft</title>
+        <meta name="description" content="ClimbCraft is a web app for rock climbers to create, discover, and share custom climbing paths for interactive rock walls and climbing routes." />
+        <link rel="stylesheet" href="climcraft_fe/assets/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" />
+        <link rel="stylesheet" href="climcraft_fe/assets/css/custom.css" /> <!-- Update the path to your custom CSS file if necessary -->
+    </head>
+      
+<body id="page-top">
+    <!-- Navigation - Copy the <nav> section from index.html for consistent navigation bar -->
+    <!-- Main content area -->
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <h2 class="mb-4 text-center">Popular Boulder Routes</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ url_for(static,'img/kittle2.jpg')}}" alt="Kittle Board 1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Kittle Board 1</h5>
+                            <p class="card-text">This is a popular route for beginners.</p>
+                            <a href="#" class="btn btn-primary mt-auto">Select Route</a>
                         </div>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="climcraft_fe/assets/img/kittle2.png" alt="Kittle Board 2">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Kittle Board 2</h5>
+                            <p class="card-text">A challenging route for intermediate climbers.</p>
+                            <a href="#" class="btn btn-primary mt-auto">Select Route</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="climcraft_fe/assets/img/kittle3.png" alt="Kittle Board 3">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Kittle Board 3</h5>
+                            <p class="card-text">Ideal for those looking for a varied climb.</p>
+                            <a href="#" class="btn btn-primary mt-auto">Select Route</a>
+                        </div>
+                    </div>
+                </div>  
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="climcraft_fe/assets/img/kittle4.png" alt="Kittle Board 4">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Kittle Board 4</h5>
+                            <p class="card-text">For advanced climbers seeking a real test.</p>
+                            <a href="#" class="btn btn-primary mt-auto">Select Route</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Footer from Template.html -->
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/script.min.js"></script>
+    <script src="climcraft_fe/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

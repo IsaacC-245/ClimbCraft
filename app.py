@@ -156,6 +156,10 @@ def home():
         list_of_dictionary.append(output)
     return render_template("home.html", list_of_dictionary)
 
+@app.route('/community')
+def community():
+    routes = Route.query.order_by(Route.date_posted.desc()).limit(5).all()
+    return render_template('community.html', routes=routes)
 
 if __name__ == '__main__':
     app.run()
