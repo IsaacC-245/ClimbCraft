@@ -33,22 +33,23 @@ class User(UserMixin, db.Model):
 class Route(db.Model):
     tablename = "route"
 
-    id = db.Column(db.Integer, primarykey=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
     difficulty = db.Column(db.String(60), nullable=False)
     angle = db.Column(db.Integer, nullable=False)
     machine_type = db.Column(db.String(60), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     create_time = db.Column(db.DateTime)
-    user = db.relationship("User", db.ForeignKey, backref="routes")
-    
+    user = db.relationship("User", backref="routes")
+
 
 class Grid(db.Model):
     tablename = "grid"
 
-    id = db.Column(db.Integer, primarykey=True)
-    route_id = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    route_id = db.Column(db.Integer, db.ForeignKey(Route.id), nullable=False)
     row = db.Column(db.String(60), nullable=False)
+    route = db.relationship("Route", backref="grids")
 
 
 class Review(db.Model):
@@ -57,8 +58,10 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Integer, nullable=True)
     difficulty = db.Column(db.Integer, nullable=True)
-    route_id = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    route_id = db.Column(db.Integer, db.ForeignKey(Route.id), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
+    route = db.relationship("Route", backref="reviews")
+    users = db.relationship("User", backref="reviews")
 
 
 class Relationship(db.Model):
@@ -128,11 +131,30 @@ def create():
         machineType = request.form.get("machine_type")
         userId = request.form.get("user_id")
 
-        mySQL = f"INSERT INTO route (name, difficulty, angle, machine_type, user_id) VALUES ({name},{difficulty},{angle},{machineType},{userId});"
-        db.engine.execute(mySQL)
+        new_route = Route(name=name, difficulty=difficulty, angle=angle, machine_type=machineType, user_id=userId)
+        db.session.add(new_route)
+        db.session.commit()
         return redirect(url_for("home"))
 
     return render_template("edit.html")
+
+
+@app.route("/home", methods=["GET", "POST"])
+def home():
+    id = current_user.id
+    routes_list = Route.query.filter_by(user_id=id)
+    list_of_dictionary = []
+    for current_route in routes_list:
+        output = {}
+        output["Id"] = current_route.id
+        output["Name"] = current_route.name
+        output["Difficulty"] = current_route.difficulty
+        output["Angle"] = current_route.angle
+        output["Machine_Type"] = current_route.machine_type
+        output["User_ID"] = current_route.user_id
+        output["Create_Time"] = current_route.create_type
+        list_of_dictionary.append(output)
+    return render_template("home.html", list_of_dictionary)
 
 
 if __name__ == '__main__':
