@@ -21,6 +21,18 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(60), nullable=False)
 
 
+class Route(db.Model):
+    tablename = "route"
+
+    id = db.Column(db.Integer, primarykey=True)
+    name = db.Column(db.String(60), nullable=False)
+    difficulty = db.Column(db.String(60), nullable=False)
+    angle = db.Column(db.Integer, nullable=False)
+    machine_type = db.Column(db.String(60), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    create_time = db.Column(db.DateTime)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -69,6 +81,22 @@ def register():
 
         return redirect(url_for("login"))
     return render_template("register.html")
+
+
+@app.route("/create", methods=["GET", "POST"])
+def create():
+    if request.method == "POST":
+        name = request.form.get("name")
+        difficulty = request.form.get("difficulty")
+        angle = request.form.get("angle")
+        machineType = request.form.get("machineType")
+        userId = request.form.get("userId")
+
+        mySQL = f"INSERT INTO route (name, difficulty, angle, machineType, userId) VALUES ({name},{difficulty},{angle},{machineType},{userId});"
+        db.engine.execute(mySQL)
+        return redirect(url_for("home"))
+
+    return render_template("edit.html")
 
 
 if __name__ == '__main__':
