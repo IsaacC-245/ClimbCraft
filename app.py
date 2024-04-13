@@ -26,7 +26,7 @@ def load_user(user_id):
 
 @app.route('/')
 def hello_world():
-    return render_template("login.html")
+    return render_template("register.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
