@@ -11,6 +11,8 @@ function createCircles(gridClass, count) {
   for (let i = 0; i < count; i++) {
     const button = document.createElement("button");
     button.className = "circle-button";
+    // Assign a unique ID based on the grid class and index
+    button.id = `${gridClass}-button-${i}`;
     button.addEventListener("click", changeColor);
     container.appendChild(button);
   }
@@ -19,14 +21,21 @@ function createCircles(gridClass, count) {
 function changeColor(event) {
   const button = event.target;
   const colors = ["grey", "green", "yellow", "orange"];
-  // Use backgroundColor in RGB format because some browsers return computed color in RGB format
   let currentColor = window.getComputedStyle(button).backgroundColor;
   let currentColorIndex = colors
     .map((color) => `rgb(${getColorComponents(color).join(", ")})`)
     .indexOf(currentColor);
-  // Set the next color or default to the first color if not found
-  button.style.backgroundColor =
-    colors[(currentColorIndex + 1) % colors.length];
+  const nextColor = colors[(currentColorIndex + 1) % colors.length];
+  button.style.backgroundColor = nextColor;
+
+  // Example of sending the updated state to the server
+  saveButtonState(button.id, nextColor);
+}
+
+// Placeholder for the actual database operation
+function saveButtonState(buttonId, color) {
+  console.log(`Saving state for ${buttonId}: color ${color}`);
+  // @RyanEbsen make requests to send the state to your server/database
 }
 
 function getColorComponents(color) {
