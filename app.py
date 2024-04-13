@@ -4,9 +4,11 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 
+app.config["SECRET_KEY"] = "c6d2f9789a32a64e8d12d42d2c955505"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 
 db = SQLAlchemy(app)
+login_manager = LoginManager(app)
 
 
 class User(UserMixin, db.Model):
@@ -17,43 +19,34 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(60), nullable=False)
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
 @app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+def hello_world():
+    return render_template("register.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        username = request.form.get("email")
         password = request.form.get("password")
 
-        new_user = User.query.filter_by(username).first()
-        if not new_user:
+        user = User.query.filter_by(username=username).first()
+        if not user:
             flash(f"No account with that username exists", "danger")
             return redirect(url_for("login"))
-        if password == new_user.password:
+        if password == user.password:
+            login_user(user)
             return redirect(url_for("home"))
         else:
             flash(f"Incorrect password", "danger")
             return redirect(url_for("login"))
 
-    # form = LoginForm()
-    # if request.method == "POST" and form.validate():
-    #     user = User.query.filter_by(email=form.email.data).first()
-    #     if not user:
-    #         flash(f"No account exists with that email", "danger")
-    #         return redirect(url_for("login"))
-    #     if not user.email_confirmed:
-    #         flash(f"Please activate your account before loging in", "danger")
-    #         return redirect(url_for("login"))
-    #     if bcrypt.check_password_hash(user.password, form.password.data):
-    #         login_user(user)
-    #         return redirect(url_for("home"))
-    #     else:
-    #         flash(f"invalid credentials", "danger")
-    #         return redirect(url_for("login"))
-    return render_template("login.html", title="Log in", form=form)
+    return render_template("login.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -62,44 +55,17 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        tempUsername = User.query.filter_by(username).first()
-        if tempUsername:
+        temp_username = User.query.filter_by(username).first()
+        if temp_username:
             flash(f"An account with that user already exists", "danger")
             return redirect(url_for("register.html"))
 
-        new_user = User(username, password)
+        new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
 
         return redirect(url_for("login"))
     return render_template("register.html")
-
-
-        # usernamePulled = User.query.filter_by(username)
-        #
-        # email = User.query.filter_by(email=form.email.data).first()
-        # if email:
-        #     flash(f"An account with that email already exists", "danger")
-        #     return redirect(url_for("register"))
-        # encrypted_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        # user = User(email=form.email.data, password=encrypted_password)
-        # db.session.add(user)
-        # db.session.commit()
-        #
-        # token = fernet.encrypt(user.email.encode())
-        # confirm_url = url_for("confirm_account", token=token, _external=True)
-        # html = render_template("email.html", confirm_url=confirm_url)
-        # msg = Message(
-        #     "Confirm your email with Organizational Odyssey!",
-        #     recipients=[user.email],
-        #     html=html,
-        #     sender="organizationalodyssey@gmail.com"
-        # )
-        # mail.send(msg)
-        #
-        # flash(f"Thank you for signing up! Please check your email to confirm your account", "success")
-        # return redirect(url_for("login"))
-    # return render_template("register.html", title="Registration", form=form)
 
 
 if __name__ == '__main__':
