@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -121,18 +123,23 @@ def register():
 @app.route("/create", methods=["GET", "POST"])
 def create():
     if request.method == "POST":
+        route_id = request.form.get("id")
         name = request.form.get("name")
         difficulty = request.form.get("difficulty")
         angle = request.form.get("angle")
         machineType = request.form.get("machine_type")
-        userId = request.form.get("user_id")
+        userId = request.form.get("user_grid")
+        #grid = request.form.get("grid_item")
 
-        new_route = Route(name=name, difficulty=difficulty, angle=angle, machine_type=machineType, user_id=userId)
-        db.session.add(new_route)
-        db.session.commit()
+        # for grid_row in grid:
+        #     sql_grid = f"INSERT INTO route (user_id, route_id, row) VALUES ({current_user.id},{route_id},{grid_row})"
+        #     db.engine.execute(sql_grid)
+
+        mySQL = f"INSERT INTO route (name, difficulty, angle, machineType, userId, create_time) VALUES ({name},{difficulty},{angle},{machineType},{userId},{datetime.now()});"
+        db.engine.execute(mySQL)
         return redirect(url_for("home"))
 
-    return render_template("edit.html")
+    return render_template("rock-grid.html")
 
 
 @app.route("/home", methods=["GET", "POST"])
@@ -147,6 +154,52 @@ def home():
         list_of_dictionary.append(output)
     data = {"data": list_of_dictionary}
     return render_template("index.html", data=list_of_dictionary)
+
+
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
+    if request.method == "GET":
+        get_id = request.form.get("id")
+        current_route = Route.query.filter_by(id=get_id).first()
+
+        #ADD METHOD TO COMPILE GRID TO SEND IT
+        grids_list = Grid.query.filter_by(route_id=current_route.id)
+        list_of_arrays = []
+        for current_grid in grids_list:
+            temp = current_grid.split(" ")
+            list_of_arrays.append(temp)
+
+        return render_template("edit.html", list_of_arrays, name=current_route.name, difficulty=current_route.difficulty, angle=current_route.angle, machineType=current_route.machineType, userId=current_route.userId)
+    if request.method == "POST":
+        send_id = request.form.get("id")
+        name = request.form.get("name")
+        difficulty = request.form.get("difficulty")
+        angle = request.form.get("angle")
+        machineType = request.form.get("machineType")
+        userId = request.form.get("userId")
+        #grid = request.form.get("grid_item")
+        current_route = Route.query.filter_by(id=send_id).first()
+        if name!=current_route.name:
+            current_route.name = name
+        if difficulty!=current_route.difficulty:
+            current_route.difficulty = difficulty
+        if angle!=current_route.angle:
+            current_route.angle = angle
+        if machineType!=current_route.difficulty:
+            current_route.machineType = machineType
+        if userId!=current_route.userId:
+            current_route.userId = userId
+        #sql_delete = f"DELETE FROM grid WHERE route_id={send_id}"
+
+        # for grid_row in grid:
+        #     sql_grid = f"INSERT INTO route (user_id, route_id, row) VALUES ({current_user.id},{send_id},{grid_row})"
+        #     db.engine.execute(sql_grid)
+
+        db.session.commit()
+        return render_template("edit.html", name=current_route.name, difficulty=current_route.difficulty, angle=current_route.angle, machineType=current_route.machineType, userId=current_route.userId)
+    return render_template("edit.html")
+
+
 
 @app.route('/community')
 def community():

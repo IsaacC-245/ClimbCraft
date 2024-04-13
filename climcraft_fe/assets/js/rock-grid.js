@@ -32,12 +32,6 @@ function changeColor(event) {
   saveButtonState(button.id, nextColor);
 }
 
-// Placeholder for the actual database operation
-function saveButtonState(buttonId, color) {
-  console.log(`Saving state for ${buttonId}: color ${color}`);
-  // @RyanEbsen make requests to send the state to your server/database
-}
-
 function getColorComponents(color) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 1;
@@ -58,6 +52,7 @@ function displayGrid(gridClass, count) {
   const selectedGrid = document.querySelector("." + gridClass);
   if (selectedGrid) {
     selectedGrid.classList.remove("hidden");
+    selectedGrid.setAttribute("id", "route_grid")
     createCircles(gridClass, count);
   }
 }
@@ -66,3 +61,46 @@ function displayGrid(gridClass, count) {
 window.onload = () => {
   displayGrid("grid-12x12", grids["grid-12x12"]);
 };
+
+// Save button state functions
+
+function submitButton() {
+  var tempString = "";
+  var stringList = [];
+  var count = 0;
+  let grid_container = document.getElementById("route_grid").children; // Ensure you are looping through the children of the grid
+  for(let grid_child of grid_container){ // Changed to a proper for...of loop
+    if(grid_child.nodeType === 1){ // Check if the element is an actual DOM element
+      if(count == 11){
+          tempString += grid_child.textContent.trim() + " "; // Collecting text content from children
+          stringList.push(tempString.trim());
+          tempString = "";
+          count = 0;
+      } else {
+          tempString += grid_child.textContent.trim() + " ";
+          count++;
+      }
+    }
+  }
+  if(tempString !== "") stringList.push(tempString.trim()); // Push any remaining string if not empty
+  return stringList;
+}
+
+// Event listeners for the buttons
+document.getElementById('save-button').addEventListener('click', function() {
+  console.log('Save pressed');
+  let data = submitButton();
+  console.log(data); // Log the data or process it
+});
+
+document.getElementById('save-close-button').addEventListener('click', function() {
+  console.log('Save & Close pressed');
+  let data = submitButton();
+  console.log(data); // Log the data or process it
+  window.close(); // Close the window or tab, adjust according to your app's needs
+});
+
+document.getElementById('close-button').addEventListener('click', function() {
+  console.log('Close pressed');
+  window.close(); // Close the window or tab, adjust according to your app's needs
+});
