@@ -18,6 +18,26 @@ function createCircles(gridClass, count) {
   }
 }
 
+function submitButton() {
+    var tempString = "";
+    var stringList = [];
+    var count = 0;
+    let grid_container = document.getElementById("route_grid")
+    for(grid_child in grid_container){
+      if(count==11){
+        tempString += grid_child;
+        stringList.push(tempString);
+        tempString = "";
+        count = 0;
+      } else {
+        tempString += grid_child+" ";
+      }
+      count++;
+    }
+
+    return stringList;
+}
+
 function changeColor(event) {
   const button = event.target;
   const colors = ["#d3d3d3", "#a3ffb4", "#fef65b", "#ffa500"];
@@ -33,9 +53,14 @@ function changeColor(event) {
 }
 
 // Placeholder for the actual database operation
-function saveButtonState(buttonId, color) {
+function saveButtonState(buttons) {
   console.log(`Saving state for ${buttonId}: color ${color}`);
   // @RyanEbsen make requests to send the state to your server/database
+
+  var count=0
+  var stringLists = []
+  var tempList = ""
+
 }
 
 function getColorComponents(color) {
@@ -58,6 +83,7 @@ function displayGrid(gridClass, count) {
   const selectedGrid = document.querySelector("." + gridClass);
   if (selectedGrid) {
     selectedGrid.classList.remove("hidden");
+    selectedGrid.setAttribute("id", "route_grid")
     createCircles(gridClass, count);
   }
 }

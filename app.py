@@ -148,6 +148,52 @@ def home():
     data = {"data": list_of_dictionary}
     return render_template("index.html", data=list_of_dictionary)
 
+
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
+    if request.method == "GET":
+        get_id = request.form.get("id")
+        current_route = Route.query.filter_by(id=get_id).first()
+
+        #ADD METHOD TO COMPILE GRID TO SEND IT
+        grids_list = Grid.query.filter_by(route_id=current_route.id)
+        list_of_arrays = []
+        for current_grid in grids_list:
+            temp = current_grid.split(" ")
+            list_of_arrays.append(temp)
+
+        return render_template("edit.html", list_of_arrays, name=current_route.name, difficulty=current_route.difficulty, angle=current_route.angle, machineType=current_route.machineType, userId=current_route.userId)
+    if request.method == "POST":
+        send_id = request.form.get("id")
+        name = request.form.get("name")
+        difficulty = request.form.get("difficulty")
+        angle = request.form.get("angle")
+        machineType = request.form.get("machineType")
+        userId = request.form.get("userId")
+        grid = request.form.get("grid_item")
+        current_route = Route.query.filter_by(id=send_id).first()
+        if name!=current_route.name:
+            current_route.name = name
+        if difficulty!=current_route.difficulty:
+            current_route.difficulty = difficulty
+        if angle!=current_route.angle:
+            current_route.angle = angle
+        if machineType!=current_route.difficulty:
+            current_route.machineType = machineType
+        if userId!=current_route.userId:
+            current_route.userId = userId
+        sql_delete = f"DELETE FROM grid WHERE route_id={send_id}"
+
+        for grid_row in grid:
+            sql_grid = f"INSERT INTO route (user_id, route_id, row) VALUES ({current_user.id},{send_id},{grid_row})"
+            db.engine.execute(sql_grid)
+
+        db.session.commit()
+        return render_template("edit.html", name=current_route.name, difficulty=current_route.difficulty, angle=current_route.angle, machineType=current_route.machineType, userId=current_route.userId)
+    return render_template("edit.html")
+
+
+
 @app.route('/community')
 def community():
     routes = Route.query.order_by(Route.date_posted.desc()).limit(5).all()
