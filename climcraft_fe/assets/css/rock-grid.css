@@ -1,46 +1,59 @@
 .grid-container {
-    display: grid;
-    gap: 10px;
-    /* Adjust the gap as needed */
-    margin-bottom: 20px;
-    /* Space between grid and control buttons */
+  display: grid;
+  gap: 10px;
+  /* Adjust the gap as needed */
+  margin-bottom: 20px;
+  /* Space between grid and control buttons */
 }
 
 .grid-7x10 {
-    grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr);
 }
 
 .grid-8x12 {
-    grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
 }
 
 .grid-12x12 {
-    grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, 1fr);
 }
 
 .circle-button {
-    padding: 20px;
-    /* Adjust based on the size you want */
-    border: 2px solid #333;
-    /* Border to distinguish circles */
-    border-radius: 50%;
-    background-color: grey;
-    cursor: pointer;
+  padding: 20px;
+  /* Adjust based on the size you want */
+  border: 2px solid #333;
+  /* Border to distinguish circles */
+  border-radius: 50%;
+  background-color: grey;
+  cursor: pointer;
 }
 
 .control-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .control-button {
-    padding: 10px 20px;
-    border: 1px solid #333;
-    background-color: #eee;
-    cursor: pointer;
+  padding: 10px 20px;
+  border: 1px solid #333;
+  background-color: #eee;
+  cursor: pointer;
 }
 
 .hidden {
-    display: none;
+  display: none;
+}
+
+.grid-wrappers {
+  height: auto;
+  width: 50%;
+
+  /*  overflow: auto; /* Adds scrollbars if the content overflows */
+}
+
+.col-Margin {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
