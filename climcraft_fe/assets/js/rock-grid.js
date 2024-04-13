@@ -20,7 +20,7 @@ function createCircles(gridClass, count) {
 
 function changeColor(event) {
   const button = event.target;
-  const colors = ["grey", "green", "yellow", "orange"];
+  const colors = ["#d3d3d3", "#a3ffb4", "#fef65b", "#ffa500"];
   let currentColor = window.getComputedStyle(button).backgroundColor;
   let currentColorIndex = colors
     .map((color) => `rgb(${getColorComponents(color).join(", ")})`)
