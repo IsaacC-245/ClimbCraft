@@ -46,5 +46,34 @@ def login():
     return render_template("login.html", title="Log in", form=form)
 
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if request.method == "POST" and form.validate():
+        email = User.query.filter_by(email=form.email.data).first()
+        if email:
+            flash(f"An account with that email already exists", "danger")
+            return redirect(url_for("register"))
+        encrypted_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(email=form.email.data, password=encrypted_password)
+        db.session.add(user)
+        db.session.commit()
+
+        token = fernet.encrypt(user.email.encode())
+        confirm_url = url_for("confirm_account", token=token, _external=True)
+        html = render_template("email.html", confirm_url=confirm_url)
+        msg = Message(
+            "Confirm your email with Organizational Odyssey!",
+            recipients=[user.email],
+            html=html,
+            sender="organizationalodyssey@gmail.com"
+        )
+        mail.send(msg)
+
+        flash(f"Thank you for signing up! Please check your email to confirm your account", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Registration", form=form)
+
+
 if __name__ == '__main__':
     app.run()
